@@ -13,4 +13,5 @@ def run():
 
 def keep_alive():
     t = threading.Thread(target=run)
+    t.daemon = True  # Ensure the thread exits when the main program exits
     t.start()
