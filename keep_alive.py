@@ -1,5 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import threading
+import os
 
 class KeepAliveHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -9,9 +10,10 @@ class KeepAliveHandler(BaseHTTPRequestHandler):
         self.wfile.write(b'Bot is alive!')
 
 def run_server():
-    server_address = ('', 3000)
+    port = int(os.environ.get('PORT', 3000))  # Use $PORT from env or default to 3000
+    server_address = ('0.0.0.0', port)        # Bind to all interfaces
     httpd = HTTPServer(server_address, KeepAliveHandler)
-    print("Keep-alive server running on port 3000")
+    print(f"Keep-alive server running on port {port}")
     httpd.serve_forever()
 
 def keep_alive():
