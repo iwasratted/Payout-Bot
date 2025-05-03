@@ -1,17 +1,20 @@
-from flask import Flask
+from http.server import BaseHTTPRequestHandler, HTTPServer
 import threading
-import os
 
-app = Flask('')
+class KeepAliveHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/plain')
+        self.end_headers()
+        self.wfile.write(b'Bot is alive!')
 
-@app.route('/')
-def home():
-    return "Bot is running!"
-
-def run():
-    app.run(host='0.0.0.0', port=8080)
+def run_server():
+    server_address = ('', 3000)
+    httpd = HTTPServer(server_address, KeepAliveHandler)
+    print("Keep-alive server running on port 3000")
+    httpd.serve_forever()
 
 def keep_alive():
-    t = threading.Thread(target=run)
-    t.daemon = True  # Ensure the thread exits when the main program exits
-    t.start()
+    thread = threading.Thread(target=run_server)
+    thread.daemon = True
+    thread.start()
